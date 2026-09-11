@@ -33,7 +33,7 @@ public class JavaApplication {
             System.out.println("Enter a username (must contain an underscore) and be no more than 5 characters");
             username = input.nextLine();
             
-            if (obj.checkUsername(username)) {
+            if (obj.checkUserName(username)) {
                 System.out.println("Username successfully captured.");
                 break;
             }else {
@@ -70,15 +70,19 @@ public class JavaApplication {
         System.out.println(registerationMessage);
         
         //login 
-        System.out.println("Enter your username:");
-        String loginUsername = input.nextLine();
-        
-        System.out.println("Enter your password");
-        String loginPassword = input.nextLine();
-        
-        String loginStatusMessage = obj.returnLoginStatus(loginUsername, loginPassword);
-        System.out.println(loginStatusMessage);
-        
+        if (registerationMessage.equals("Username successfully captured.")) {
+            System.out.println();
+            System.out.println("=== QuickChat Login ===");
+
+            System.out.print("Enter your username: ");
+            String strLoginUsername = input.nextLine();
+
+            System.out.print("Enter your password: ");
+            String strLoginPassword = input.nextLine();
+
+            boolean blnSuccess = obj.loginUser(strLoginUsername, strLoginPassword);
+            System.out.println(obj.returnLoginStatus(blnSuccess));
+        }
         input.close();
     }
     

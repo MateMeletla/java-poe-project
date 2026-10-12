@@ -1,4 +1,4 @@
-# This workflow will build a Java project with Ant
+# Builds the JavaApplication NetBeans/Ant project and runs the JUnit tests
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
 
 name: TestJava
@@ -14,8 +14,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Every "run" step below executes inside the NetBeans project folder
-    # (the folder that contains build.xml, nbproject/, src/ and lib/)
+    # Every "run" step executes inside the NetBeans project folder
+    # (the folder that contains build.xml, nbproject/, src/, test/ and lib/)
     defaults:
       run:
         working-directory: JavaApplication
@@ -25,21 +25,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Install JDK 21 (matches javac.source / javac.target in project.properties)
-      - name: Set up JDK 21
+      # 2. Install JDK 26 (must match javac.source / javac.target in nbproject/project.properties)
+      - name: Set up JDK 26
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '26'
 
-      # 3. Ant is NOT bundled with the JDK on GitHub runners, so install it.
-      #    ant-junit is needed so Ant can run the <junit> task.
+      # 3. Install a recent Ant directly from Apache (apt's Ant/ant-junit packages
+      #    caused install failures, and old Ant versions can reject new JDKs).
+      #    The binary distribution already includes the <junit> task.
       - name: Install Ant
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ant ant-junit
+          curl -sSL -o "$RUNNER_TEMP/ant.tar.gz" https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.15-bin.tar.gz
+          tar -xzf "$RUNNER_TEMP/ant.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/apache-ant-1.10.15/bin" >> "$GITHUB_PATH"
 
-      # 4. NetBeans keeps its JUnit jars inside the IDE, which the runner does not have.
+      # 4. Print versions so problems are easy to spot in the log
+      - name: Check Java and Ant versions
+        run: |
+          java -version
+          ant -version
+
+      # 5. NetBeans keeps its JUnit jars inside the IDE, which the runner does not have.
       #    Download JUnit 4 and Hamcrest so the tests can compile and run.
       - name: Download JUnit 4 and Hamcrest
         run: |
@@ -47,7 +55,7 @@ jobs:
           curl -sSL -o ci-libs/junit-4.13.2.jar https://repo1.maven.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar
           curl -sSL -o ci-libs/hamcrest-core-1.3.jar https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
 
-      # 5. Compile and run all tests.
+      # 6. Compile and run all tests.
       #    JavaApplication/lib/json-simple-1.1.1.jar must be committed to the repo.
       - name: Run tests with Ant
         run: >
@@ -55,7 +63,8 @@ jobs:
           -Dlibs.junit.classpath=ci-libs/junit-4.13.2.jar:ci-libs/hamcrest-core-1.3.jar
           -Dlibs.junit_4.classpath=ci-libs/junit-4.13.2.jar:ci-libs/hamcrest-core-1.3.jar
 
-      # 6. Keep the test reports so you can open them from the Actions tab
+      # 7. Keep the test reports so you can open them from the Actions tab.
+      #    "uses:" steps ignore the default working directory, so the full path is needed.
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

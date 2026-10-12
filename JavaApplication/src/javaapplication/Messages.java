@@ -17,132 +17,182 @@ import java.util.Random;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParserException;
+import org.json.simple.parser.ParseException;
 
 public class Messages {
-    //variables 
+
+    // ---------- Variables ----------
     private String messageID;
     private String message;
     private String recipient;
     private String messageHash;
-    private int  messageNo;
-    private static ArrayList<String>sentMessages= new ArrayList<String>();
+    private int messageNo;
+    private static ArrayList<String> sentMessages = new ArrayList<String>();
     private static int totalNoMessagesSent = 0;
-    
-    //constructor
-    public Messages(String message, int messageNo, String messageHash, String messageID, String recipient){
-        this.message = message;
+
+    // ---------- Constructor ----------
+    public Messages(int messageNo, String recipient, String message) {
         this.messageNo = messageNo;
         this.recipient = recipient;
+        this.message = message;
         this.messageID = generateID();
         this.messageHash = createMessageHash();
-        
     }
-    
+
+    // ---------- Message ID ----------
     public void setMessageID(String messageID) {
         this.messageID = messageID;
         this.messageHash = createMessageHash();
     }
-    
+
     private String generateID() {
         Random random = new Random();
         String id = "";
         int count = 0;
-        
+
         while (count < 10) {
             id = id + random.nextInt(10);
             count++;
         }
         return id;
     }
-    
+
     public boolean checkMessageID() {
-    
-        boolean result = false;
-        
-        if (messageID.length() <= 10) {
-            result = true;
-        }
-        return result;
+        return messageID.length() <= 10;
     }
-    
+
+    // ---------- Validation ----------
     public String checkRecipientCell() {
-        String result = "Cell phone number is incorrectly formatted, Please reenter the phone numeber.";
-        
+        String result = "Cell phone number is incorrectly formatted or does not contain an international code. "
+                + "Please correct the number and try again.";
+
         if (recipient.matches("^\\+\\d{10,11}$")) {
-            result = "Cell phone number has been successfully captured.";
+            result = "Cell phone number successfully captured.";
         }
         return result;
     }
-    
-    public String checkMessageLength()  {
-        String result ;
-        
-        if (message.length() <= 250 ) {
-            result = "Message is ready to send";
-        }else {
-            int x = message.length() - 250;
-            result = "Message exceeds 250 characters by " + x + "; Please reduce the size.";
-        }
-        return result;
-    }
-    
-    //message hash task
-    public String createMessageHash() {
-        String firstTwo = messageID.substring(0,2);
-        String[] words = message.trim().split(" ");
-        String firstWord = words[0];
-        String lastWord = words[words.length - 1];
-        String hash;
-        
-        firstWord = firstWord.replaceAll("[^A-Za-z0-9]", " ");
-        lastWord = lastWord.replaceAll("[^A-Za-z0-9]", " ");
-        hash = firstTwo + ";" + messageNo+ ":" + firstWord + lastWord;
-        
-        return hash.toUpperCase();
-       
-    }
-    
-    public String SentMesssage(int choice) { 
+
+    public String checkMessageLength() {
         String result;
-        
-        switch (choice) {
-            case 1: sentMessages.getFullDetails();
-                    totalNoMessagesSent++;
-                    break;
-            case 2: 
-                    result ="Press 0 to delete the message.";
-                    break;
-            case 3: storeMessage();
-                    result = "Message successfully stored.";
-                    break;
-            default: result = "Invalid selection choice";
-                     break;
+
+        if (message.length() <= 250) {
+            result = "Message ready to send.";
+        } else {
+            int x = message.length() - 250;
+            result = "Message exceeds 250 characters by " + x + "; please reduce the size.";
         }
         return result;
-        
     }
-    
-    public String getFullDetails(){
-            return "MessageID:" + messageID 
-                    + "\nMessageHash:" + messageHash +
-                    "\nRecipient:" + recipient + 
-                    "\nMessage: " + message;
+
+    // ---------- Message hash ----------
+    public String createMessageHash() {
+        String firstTwo = messageID.substring(0, 2);
+        String[] words = message.trim().split(" ");
+        String firstWord = words[0].replaceAll("[^A-Za-z0-9]", "");
+        String lastWord = words[words.length - 1].replaceAll("[^A-Za-z0-9]", "");
+
+        String hash = firstTwo + ":" + messageNo + ":" + firstWord + lastWord;
+        return hash.toUpperCase();
+    }
+
+    // ---------- Details / send / print ----------
+    public String getFullDetails() {
+        return "Message ID: " + messageID
+                + "\nMessage Hash: " + messageHash
+                + "\nRecipient: " + recipient
+                + "\nMessage: " + message + "\n";
+    }
+
+    public String SentMesssage(int choice) {
+        String result = "";
+
+        switch (choice) {
+            case 1:
+                sentMessages.add(getFullDetails());
+                totalNoMessagesSent++;
+                result = "Message successfully sent.";
+                break;
+            case 2:
+                result = "Press 0 to delete the message.";
+                break;
+            case 3:
+                storeMessages();
+                result = "Message successfully stored.";
+                break;
+            default:
+                result = "Invalid selection choice";
+                break;
         }
-        
-        public static String printMessages(){
-            String allMessages = "";
-            
-            int i =0;
-            
-            while (i < sentMessages.size()) {
-                allMessages = allMessages + sentMessages.get(i) + "\n";
-                i++;
+        return result;
+    }
+
+    public static String printMessages() {
+        String allMessages = "";
+        int i = 0;
+
+        while (i < sentMessages.size()) {
+            allMessages = allMessages + sentMessages.get(i) + "\n";
+            i++;
+        }
+        return allMessages;
+    }
+
+    public int returnTotalMessages() {
+        return totalNoMessagesSent;
+    }
+
+    // ---------- JSON storage ----------
+    @SuppressWarnings("unchecked")
+    public boolean storeMessages() {
+        boolean stored = false;
+        String filePath = "messages.json";
+        JSONArray messageArray = new JSONArray();
+
+        File file = new File(filePath);
+        if (file.exists()) {
+            try (FileReader reader = new FileReader(file)) {
+                JSONParser parser = new JSONParser();
+                Object obj = parser.parse(reader);
+                if (obj instanceof JSONArray) {
+                    messageArray = (JSONArray) obj;
+                }
+            } catch (IOException | ParseException e) {
+                System.out.println("Could not read existing file, starting fresh.");
             }
-            return allMessages;
         }
-        
-        public int returnTotalMessages() {
-            return totalNoMessagesSent;
+
+        JSONObject messageObj = new JSONObject();
+        messageObj.put("messageID", messageID);
+        messageObj.put("messageHash", messageHash);
+        messageObj.put("recipient", recipient);
+        messageObj.put("message", message);
+        messageArray.add(messageObj);
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(messageArray.toJSONString());
+            writer.flush();
+            stored = true;
+        } catch (IOException e) {
+            System.out.println("Error writing JSON file: " + e.getMessage());
         }
+
+        return stored;
+    }
+
+    // ---------- Getters ----------
+    public String getMessageID() {
+        return messageID;
+    }
+
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getMessageHash() {
+        return messageHash;
+    }
 }

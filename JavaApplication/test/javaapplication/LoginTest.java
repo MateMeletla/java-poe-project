@@ -31,9 +31,8 @@ public class LoginTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of checkUserName method, of class LoginConsole - correctly formatted.
-     */
+    //Test of checkUserName method, of class LoginConsole - correctly formatted.
+     
     @Test
     public void testCheckUserName_CorrectlyFormatted() {
         System.out.println("checkUserName");
@@ -44,9 +43,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of checkUserName method, of class LoginConsole - incorrectly formatted.
-     */
+    //Test of checkUserName method, of class LoginConsole - incorrectly formatted.
+     
     @Test
     public void testCheckUserName_IncorrectlyFormatted() {
         System.out.println("checkUserName");
@@ -57,9 +55,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of checkPasswordComplexity method, of class LoginConsole - meets complexity.
-     */
+    //Test of checkPasswordComplexity method, of class LoginConsole - meets complexity.
+    
     @Test
     public void testCheckPasswordComplexity_Correct() {
         System.out.println("checkPasswordComplexity");
@@ -70,9 +67,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of checkPasswordComplexity method, of class LoginConsole - does not meet complexity.
-     */
+    // Test of checkPasswordComplexity method, of class LoginConsole - does not meet complexity.
+    
     @Test
     public void testCheckPasswordComplexity_Incorrect() {
         System.out.println("checkPasswordComplexity");
@@ -83,9 +79,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of checkCellPhoneNumber method, of class LoginConsole - correctly formatted.
-     */
+    // Test of checkCellPhoneNumber method, of class LoginConsole - correctly formatted.
+    
     @Test
     public void testCheckCellPhoneNumber_Correct() {
         System.out.println("checkCellPhoneNumber");
@@ -96,9 +91,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of checkCellPhoneNumber method, of class LoginConsole - incorrectly formatted.
-     */
+    //Test of checkCellPhoneNumber method, of class LoginConsole - incorrectly formatted.
+    
     @Test
     public void testCheckCellPhoneNumber_Incorrect() {
         System.out.println("checkCellPhoneNumber");
@@ -109,9 +103,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of registerUser method, of class LoginConsole - all details valid.
-     */
+    // Test of registerUser method, of class LoginConsole - all details valid.
+     
     @Test
     public void testRegisterUser_Success() {
         System.out.println("registerUser");
@@ -126,9 +119,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of registerUser method, of class LoginConsole - invalid username.
-     */
+    // Test of registerUser method, of class LoginConsole - invalid username.
+     
     @Test
     public void testRegisterUser_BadUsername() {
         System.out.println("registerUser");
@@ -143,9 +135,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of loginUser method, of class LoginConsole - successful login.
-     */
+    // Test of loginUser method, of class LoginConsole - successful login.
+     
     @Test
     public void testLoginUser_Successful() {
         System.out.println("loginUser");
@@ -158,9 +149,7 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of loginUser method, of class LoginConsole - failed login.
-     */
+    // Test of loginUser method, of class LoginConsole - failed login.
     @Test
     public void testLoginUser_Failed() {
         System.out.println("loginUser");
@@ -173,9 +162,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of returnLoginStatus method, of class LoginConsole - success message.
-     */
+    // Test of returnLoginStatus method, of class LoginConsole - success message.
+  
     @Test
     public void testReturnLoginStatus_Success() {
         System.out.println("returnLoginStatus");
@@ -187,9 +175,8 @@ public class LoginTest {
         assertEquals(expResult, result);
     }
 
-    /**
-     * Test of returnLoginStatus method, of class LoginConsole - failure message.
-     */
+    //Test of returnLoginStatus method, of class LoginConsole - failure message.
+    
     @Test
     public void testReturnLoginStatus_Failure() {
         System.out.println("returnLoginStatus");

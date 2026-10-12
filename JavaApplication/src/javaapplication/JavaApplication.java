@@ -23,6 +23,8 @@ public class JavaApplication {
         String password;
         String cellNumber;
         
+        //user registration 
+        System.out.println("=========Registration ===============");
         System.out.println("Enter your first name:");
         String firstName = input.nextLine();
         
@@ -65,11 +67,11 @@ public class JavaApplication {
             }
         }
         
-        //register 
+        //register validation/ authentication
         String registerationMessage = obj.registerUser(username, password, cellNumber, firstName , lastName);
         System.out.println(registerationMessage);
         
-        //login 
+        //login feature
         if (registerationMessage.equals("Username successfully captured.")) {
             System.out.println();
             System.out.println("=== QuickChat Login ===");
